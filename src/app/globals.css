@@ -1,20 +1,29 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #333; /* Dark gray background */
+  color: #FFF; /* White text */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  height: 100vh;
+  margin: 0;
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --background: 0 0% 20%; /* Dark gray (#333) */
+    --foreground: 0 0% 100%; /* White (#FFF) */
+    --card: 0 0% 27%; /* Lighter gray (#444) */
+    --card-foreground: 0 0% 100%; /* White (#FFF) */
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 180 100% 25%; /* Teal (#008080) */
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -86,3 +95,6 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+    
