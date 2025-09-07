@@ -17,9 +17,13 @@ interface PlayerPanelProps {
 }
 
 const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, rotated}) => {
-  const glowStyle = {
+  const textGlowStyle = {
     textShadow: `0 0 8px ${player.color}`,
-    color: player.color
+    color: player.color,
+  };
+  const boxGlowStyle = {
+    boxShadow: `0 0 8px ${player.color}`,
+    borderColor: player.color
   };
   const buttonGlowStyle = {
     boxShadow: `0 0 8px ${player.color}`,
@@ -29,9 +33,11 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecreme
 
   return (
     <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full bg-black border-2", rotated && "transform rotate-180")} style={{ borderColor: player.color }}>
-      <h2 className="text-lg font-semibold bg-black px-2 py-1 rounded" style={glowStyle}>{player.name}</h2>
-      <p className="text-4xl font-bold my-4 bg-black px-3 py-1 rounded-md" style={glowStyle}>{player.life}</p>
-      <div className="flex gap-4">
+      <div className="border-2 rounded-md p-2" style={boxGlowStyle}>
+        <h2 className="text-lg font-semibold bg-black px-2 py-1 text-center" style={textGlowStyle}>{player.name}</h2>
+        <p className="text-4xl font-bold my-2 bg-black px-3 py-1 rounded-md text-center" style={textGlowStyle}>{player.life}</p>
+      </div>
+      <div className="flex gap-4 mt-4">
         <Button onClick={onDecrement} variant="outline" size="icon" className="w-12 h-12 bg-black border" style={buttonGlowStyle}>
           <Minus className="h-6 w-6"/>
         </Button>
