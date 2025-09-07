@@ -17,17 +17,10 @@ interface PlayerPanelProps {
 }
 
 const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, rotated}) => {
-  const textOutlineStyle = {
-    textShadow: '1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black',
-  };
-  const largeTextOutlineStyle = {
-    textShadow: '1px 1px 3px black, -1px -1px 3px black, 1px -1px 3px black, -1px 1px 3px black',
-  }
-
   return (
     <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full", rotated && "rotate-180")} style={{ backgroundColor: player.color }}>
-      <h2 className="text-lg font-semibold" style={textOutlineStyle}>{player.name}</h2>
-      <p className="text-4xl font-bold my-4" style={largeTextOutlineStyle}>{player.life}</p>
+      <h2 className="text-lg font-semibold bg-black px-2 py-1 rounded">{player.name}</h2>
+      <p className="text-4xl font-bold my-4 bg-black px-3 py-1 rounded-md">{player.life}</p>
       <div className="flex gap-4">
         <Button onClick={onDecrement} variant="secondary" size="icon" className="w-12 h-12">
           <Minus className="h-6 w-6"/>
