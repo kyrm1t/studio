@@ -7,16 +7,18 @@ import {Button} from "@/components/ui/button";
 import {Plus, Minus, RotateCcw, Settings} from 'lucide-react';
 import type { Player } from '@/lib/types';
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface PlayerPanelProps {
   player: Player;
   onIncrement: () => void;
   onDecrement: () => void;
+  rotated?: boolean;
 }
 
-const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement}) => {
+const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, rotated}) => {
   return (
-    <Card className="p-4 flex flex-col items-center justify-center aspect-square" style={{ backgroundColor: player.color }}>
+    <Card className={cn("p-4 flex flex-col items-center justify-center aspect-square", rotated && "rotate-180")} style={{ backgroundColor: player.color }}>
       <h2 className="text-lg font-semibold">{player.name}</h2>
       <p className="text-4xl font-bold my-4">{player.life}</p>
       <div className="flex gap-4">
@@ -74,7 +76,7 @@ export default function Home() {
   };
 
   const renderPlayerPanels = () => {
-    if (players.length === 2) {
+    if (players.length <= 2) {
       return (
         <div className="flex flex-col gap-4 w-full max-w-sm">
           {players.map((player, index) => (
@@ -83,6 +85,7 @@ export default function Home() {
               player={player}
               onIncrement={() => updatePlayerLife(index, 1)}
               onDecrement={() => updatePlayerLife(index, -1)}
+              rotated={index === 0}
             />
           ))}
         </div>
@@ -104,6 +107,7 @@ export default function Home() {
                         player={player}
                         onIncrement={() => updatePlayerLife(index, 1)}
                         onDecrement={() => updatePlayerLife(index, -1)}
+                        rotated={index < 2}
                     />
                 </div>
             ))}
