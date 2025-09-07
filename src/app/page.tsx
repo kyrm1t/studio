@@ -18,7 +18,7 @@ interface PlayerPanelProps {
 
 const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, rotated}) => {
   return (
-    <Card className={cn("p-4 flex flex-col items-center justify-center aspect-square", rotated && "rotate-180")} style={{ backgroundColor: player.color }}>
+    <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full", rotated && "rotate-180")} style={{ backgroundColor: player.color }}>
       <h2 className="text-lg font-semibold">{player.name}</h2>
       <p className="text-4xl font-bold my-4">{player.life}</p>
       <div className="flex gap-4">
@@ -80,29 +80,56 @@ export default function Home() {
       return (
         <div className="flex flex-col gap-4 w-full max-w-sm">
           {players.map((player, index) => (
-            <PlayerPanel
-              key={player.id}
-              player={player}
-              onIncrement={() => updatePlayerLife(index, 1)}
-              onDecrement={() => updatePlayerLife(index, -1)}
-              rotated={index === 0}
-            />
+            <div key={player.id} className="aspect-square">
+              <PlayerPanel
+                key={player.id}
+                player={player}
+                onIncrement={() => updatePlayerLife(index, 1)}
+                onDecrement={() => updatePlayerLife(index, -1)}
+                rotated={index === 0}
+              />
+            </div>
           ))}
         </div>
       );
     }
+    
+    if (players.length === 3) {
+      return (
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl aspect-square">
+          <div className="col-span-1 row-span-1">
+            <PlayerPanel
+              player={players[0]}
+              onIncrement={() => updatePlayerLife(0, 1)}
+              onDecrement={() => updatePlayerLife(0, -1)}
+              rotated={true}
+            />
+          </div>
+          <div className="col-span-1 row-span-1">
+            <PlayerPanel
+              player={players[1]}
+              onIncrement={() => updatePlayerLife(1, 1)}
+              onDecrement={() => updatePlayerLife(1, -1)}
+              rotated={true}
+            />
+          </div>
+          <div className="col-span-2 row-span-1">
+             <PlayerPanel
+              player={players[2]}
+              onIncrement={() => updatePlayerLife(2, 1)}
+              onDecrement={() => updatePlayerLife(2, -1)}
+              rotated={false}
+            />
+          </div>
+        </div>
+      );
+    }
 
-    const gridPositions = [
-        "col-span-1 row-span-1",
-        "col-start-2 col-span-1 row-span-1",
-        "col-span-1 row-start-2 row-span-1",
-        "col-start-2 col-span-1 row-start-2 row-span-1"
-    ];
-
+    // 4 players
     return (
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl p-4">
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl aspect-square">
             {players.map((player, index) => (
-                <div key={player.id} className={gridPositions[index]}>
+                <div key={player.id} className="col-span-1 row-span-1">
                     <PlayerPanel
                         player={player}
                         onIncrement={() => updatePlayerLife(index, 1)}
@@ -117,7 +144,7 @@ export default function Home() {
 
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen">
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-4">
        <div className="absolute top-4 right-4">
         <Link href="/settings">
           <Button variant="ghost" size="icon">
