@@ -32,10 +32,12 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({player, life, onIncrement, onD
 const STARTING_LIFE = 20;
 
 const ResetButton: React.FC<{ onReset: () => void }> = ({ onReset }) => (
-    <Button onClick={onReset} className="mt-4">
-      Reset All Players
-    </Button>
-  );
+    <div className="flex justify-center md:col-span-2 lg:col-span-4">
+        <Button onClick={onReset} className="mt-4">
+            Reset All Players
+        </Button>
+    </div>
+);
 
 export default function Home() {
   const [lifeTotals, setLifeTotals] = useState([STARTING_LIFE, STARTING_LIFE, STARTING_LIFE, STARTING_LIFE]);
@@ -76,7 +78,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {lifeTotals.map((life, index) => (
         <PlayerPanel
           key={index}
@@ -87,8 +89,6 @@ export default function Home() {
         />
       ))}
       <ResetButton onReset={resetLifeTotals} />
-    </>
+    </div>
   );
 }
-
-    
