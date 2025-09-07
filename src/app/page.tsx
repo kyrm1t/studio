@@ -4,6 +4,7 @@
 import React, {useState, useEffect} from 'react';
 import Link from 'next/link';
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {Plus, Minus, RotateCcw, Settings} from 'lucide-react';
 import type { Player } from '@/lib/types';
 import { Card } from '@/components/ui/card';
@@ -13,10 +14,12 @@ interface PlayerPanelProps {
   player: Player;
   onIncrement: () => void;
   onDecrement: () => void;
+  onNameChange: (name: string) => void;
+  onLifeChange: (life: number) => void;
   rotated?: boolean;
 }
 
-const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, rotated}) => {
+const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, onNameChange, onLifeChange, rotated}) => {
   const textGlowStyle = {
     textShadow: `0 0 8px ${player.color}`,
     color: player.color,
@@ -33,11 +36,23 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecreme
 
   return (
     <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full bg-black border-2 border-primary shadow-[0_0_8px_theme(colors.primary)]", rotated && "transform rotate-180")}>
-      <div className="border-2 rounded-md p-2 mb-2" style={boxGlowStyle}>
-        <h2 className="text-lg font-semibold bg-black px-2 py-1 text-center" style={textGlowStyle}>{player.name}</h2>
+      <div className="border-2 rounded-md p-2 mb-2 bg-black" style={boxGlowStyle}>
+        <Input
+          type="text"
+          value={player.name}
+          onChange={(e) => onNameChange(e.target.value)}
+          className="text-lg font-semibold bg-transparent border-none text-center focus-visible:ring-0 focus-visible:ring-offset-0 w-32"
+          style={textGlowStyle}
+        />
       </div>
-      <div className="border-2 rounded-md p-2" style={boxGlowStyle}>
-        <p className="text-8xl font-bold bg-black px-3 py-1 rounded-md text-center" style={textGlowStyle}>{player.life}</p>
+      <div className="border-2 rounded-md p-2 bg-black" style={boxGlowStyle}>
+        <Input
+          type="number"
+          value={player.life}
+          onChange={(e) => onLifeChange(parseInt(e.target.value, 10) || 0)}
+          className="text-8xl font-bold bg-transparent border-none text-center focus-visible:ring-0 focus-visible:ring-offset-0 w-48 h-24"
+          style={textGlowStyle}
+        />
       </div>
       <div className="flex gap-4 mt-4">
         <Button onClick={onDecrement} variant="outline" size="icon" className="w-12 h-12 bg-black border" style={buttonGlowStyle}>
@@ -91,6 +106,22 @@ export default function Home() {
     });
   };
 
+  const handlePlayerNameChange = (playerIndex: number, newName: string) => {
+    setPlayers(prevPlayers => {
+      const newPlayers = [...prevPlayers];
+      newPlayers[playerIndex] = { ...newPlayers[playerIndex], name: newName };
+      return newPlayers;
+    });
+  };
+
+  const handlePlayerLifeChange = (playerIndex: number, newLife: number) => {
+    setPlayers(prevPlayers => {
+      const newPlayers = [...prevPlayers];
+      newPlayers[playerIndex] = { ...newPlayers[playerIndex], life: newLife };
+      return newPlayers;
+    });
+  };
+
   const resetLifeTotals = () => {
     setPlayers(prevPlayers => {
       const resetPlayers = prevPlayers.map(p => ({...p, life: startingLife}));
@@ -117,6 +148,8 @@ export default function Home() {
                 player={players[0]}
                 onIncrement={() => updatePlayerLife(0, 1)}
                 onDecrement={() => updatePlayerLife(0, -1)}
+                onNameChange={(name) => handlePlayerNameChange(0, name)}
+                onLifeChange={(life) => handlePlayerLifeChange(0, life)}
                 rotated={true}
               />
             </div>
@@ -130,6 +163,8 @@ export default function Home() {
                   player={players[1]}
                   onIncrement={() => updatePlayerLife(1, 1)}
                   onDecrement={() => updatePlayerLife(1, -1)}
+                  onNameChange={(name) => handlePlayerNameChange(1, name)}
+                  onLifeChange={(life) => handlePlayerLifeChange(1, life)}
                   rotated={false}
                 />
               </div>
@@ -147,6 +182,8 @@ export default function Home() {
                 player={players[0]}
                 onIncrement={() => updatePlayerLife(0, 1)}
                 onDecrement={() => updatePlayerLife(0, -1)}
+                onNameChange={(name) => handlePlayerNameChange(0, name)}
+                onLifeChange={(life) => handlePlayerLifeChange(0, life)}
                 rotated={true}
               />
             </div>
@@ -155,6 +192,8 @@ export default function Home() {
                 player={players[1]}
                 onIncrement={() => updatePlayerLife(1, 1)}
                 onDecrement={() => updatePlayerLife(1, -1)}
+                onNameChange={(name) => handlePlayerNameChange(1, name)}
+                onLifeChange={(life) => handlePlayerLifeChange(1, life)}
                 rotated={true}
               />
             </div>
@@ -167,6 +206,8 @@ export default function Home() {
               player={players[2]}
               onIncrement={() => updatePlayerLife(2, 1)}
               onDecrement={() => updatePlayerLife(2, -1)}
+              onNameChange={(name) => handlePlayerNameChange(2, name)}
+              onLifeChange={(life) => handlePlayerLifeChange(2, life)}
               rotated={false}
             />
           </div>
@@ -184,6 +225,8 @@ export default function Home() {
                         player={player}
                         onIncrement={() => updatePlayerLife(index, 1)}
                         onDecrement={() => updatePlayerLife(index, -1)}
+                        onNameChange={(name) => handlePlayerNameChange(index, name)}
+                        onLifeChange={(life) => handlePlayerLifeChange(index, life)}
                         rotated={true}
                     />
                 </div>
@@ -199,6 +242,8 @@ export default function Home() {
                         player={player}
                         onIncrement={() => updatePlayerLife(index + 2, 1)}
                         onDecrement={() => updatePlayerLife(index + 2, -1)}
+                        onNameChange={(name) => handlePlayerNameChange(index + 2, name)}
+                        onLifeChange={(life) => handlePlayerLifeChange(index + 2, life)}
                         rotated={false}
                     />
                 </div>
