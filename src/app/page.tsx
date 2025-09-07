@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import Link from 'next/link';
 import {Button} from "@/components/ui/button";
 import {Plus, Minus, RotateCcw, Settings} from 'lucide-react';
@@ -18,7 +18,7 @@ interface PlayerPanelProps {
 
 const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecrement, rotated}) => {
   return (
-    <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full", rotated && "rotate-180")} style={{ backgroundColor: player.color }}>
+    <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full", rotated && "transform rotate-180")} style={{ backgroundColor: player.color }}>
       <h2 className="text-lg font-semibold bg-black px-2 py-1 rounded">{player.name}</h2>
       <p className="text-4xl font-bold my-4 bg-black px-3 py-1 rounded-md">{player.life}</p>
       <div className="flex gap-4">
@@ -80,45 +80,71 @@ export default function Home() {
     });
   };
 
+  const renderResetButton = () => (
+    <div className="w-full flex items-center justify-center my-2">
+      <Button onClick={resetLifeTotals} variant="outline" className="w-full max-w-sm h-16 bg-black border-2 border-primary shadow-[0_0_10px_theme(colors.primary)]">
+          <RotateCcw className="w-8 h-8"/>
+          <span className="ml-2 text-lg">Reset All Players</span>
+      </Button>
+    </div>
+  );
+
   const renderPlayerPanels = () => {
     if (players.length <= 2) {
       return (
         <div className="flex flex-col gap-4 w-full max-w-sm">
-          {players.map((player, index) => (
-            <div key={player.id} className="aspect-square">
+          {players.length > 0 && (
+            <div className="aspect-square">
               <PlayerPanel
-                key={player.id}
-                player={player}
-                onIncrement={() => updatePlayerLife(index, 1)}
-                onDecrement={() => updatePlayerLife(index, -1)}
-                rotated={index === 0}
+                player={players[0]}
+                onIncrement={() => updatePlayerLife(0, 1)}
+                onDecrement={() => updatePlayerLife(0, -1)}
+                rotated={true}
               />
             </div>
-          ))}
+          )}
+          
+          {renderResetButton()}
+
+          {players.length > 1 && (
+             <div className="aspect-square">
+                <PlayerPanel
+                  player={players[1]}
+                  onIncrement={() => updatePlayerLife(1, 1)}
+                  onDecrement={() => updatePlayerLife(1, -1)}
+                  rotated={false}
+                />
+              </div>
+          )}
         </div>
       );
     }
     
     if (players.length === 3) {
       return (
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl aspect-square">
-          <div className="col-span-1 row-span-1">
-            <PlayerPanel
-              player={players[0]}
-              onIncrement={() => updatePlayerLife(0, 1)}
-              onDecrement={() => updatePlayerLife(0, -1)}
-              rotated={true}
-            />
+        <div className="flex flex-col items-center w-full max-w-2xl">
+          <div className="grid grid-cols-2 gap-4 w-full">
+            <div className="col-span-1 aspect-square">
+              <PlayerPanel
+                player={players[0]}
+                onIncrement={() => updatePlayerLife(0, 1)}
+                onDecrement={() => updatePlayerLife(0, -1)}
+                rotated={true}
+              />
+            </div>
+            <div className="col-span-1 aspect-square">
+              <PlayerPanel
+                player={players[1]}
+                onIncrement={() => updatePlayerLife(1, 1)}
+                onDecrement={() => updatePlayerLife(1, -1)}
+                rotated={true}
+              />
+            </div>
           </div>
-          <div className="col-span-1 row-span-1">
-            <PlayerPanel
-              player={players[1]}
-              onIncrement={() => updatePlayerLife(1, 1)}
-              onDecrement={() => updatePlayerLife(1, -1)}
-              rotated={true}
-            />
-          </div>
-          <div className="col-span-2 row-span-1">
+          
+          {renderResetButton()}
+          
+          <div className="w-full">
              <PlayerPanel
               player={players[2]}
               onIncrement={() => updatePlayerLife(2, 1)}
@@ -132,25 +158,42 @@ export default function Home() {
 
     // 4 players
     return (
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl aspect-square">
-            {players.map((player, index) => (
-                <div key={player.id} className="col-span-1 row-span-1">
+      <div className="flex flex-col items-center w-full max-w-2xl">
+        <div className="grid grid-cols-2 gap-4 w-full">
+            {players.slice(0,2).map((player, index) => (
+                <div key={player.id} className="aspect-square">
                     <PlayerPanel
                         player={player}
                         onIncrement={() => updatePlayerLife(index, 1)}
                         onDecrement={() => updatePlayerLife(index, -1)}
-                        rotated={index < 2}
+                        rotated={true}
                     />
                 </div>
             ))}
         </div>
+        
+        {renderResetButton()}
+
+        <div className="grid grid-cols-2 gap-4 w-full">
+           {players.slice(2,4).map((player, index) => (
+                <div key={player.id} className="aspect-square">
+                    <PlayerPanel
+                        player={player}
+                        onIncrement={() => updatePlayerLife(index + 2, 1)}
+                        onDecrement={() => updatePlayerLife(index + 2, -1)}
+                        rotated={false}
+                    />
+                </div>
+            ))}
+        </div>
+      </div>
     );
   };
 
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen p-4">
-       <div className="absolute top-4 right-4">
+    <main className="relative flex flex-col items-center justify-center min-h-screen p-4">
+       <div className="absolute top-4 right-4 z-10">
         <Link href="/settings">
           <Button variant="ghost" size="icon">
             <Settings className="w-6 h-6"/>
@@ -158,16 +201,7 @@ export default function Home() {
         </Link>
       </div>
       
-      <div className="flex-grow flex items-center justify-center w-full">
-        {renderPlayerPanels()}
-      </div>
-
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-          <Button onClick={resetLifeTotals} className="w-24 h-24 rounded-full p-0">
-              <RotateCcw className="w-10 h-10"/>
-              <span className="sr-only">Reset All Players</span>
-          </Button>
-      </div>
-    </div>
+      {renderPlayerPanels()}
+    </main>
   );
 }
