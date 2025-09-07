@@ -6,12 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlusCircle, Trash2, ArrowLeft } from 'lucide-react';
 import type { Player } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-const STARTING_LIFE = 20;
 const MAX_PLAYERS = 4;
 const COLORS = [
   '#dc2626', // red-600
@@ -22,51 +21,42 @@ const COLORS = [
   '#db2777', // pink-600
 ];
 
-const defaultPlayers: Player[] = [
-  { id: 1, name: 'Player 1', life: STARTING_LIFE, color: '#444444' },
-  { id: 2, name: 'Player 2', life: STARTING_LIFE, color: '#444444' },
+const defaultPlayers = (startingLife: number): Player[] => [
+  { id: 1, name: 'Player 1', life: startingLife, color: '#444444' },
+  { id: 2, name: 'Player 2', life: startingLife, color: '#444444' },
 ];
 
 
 export default function SettingsPage() {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [startingLife, setStartingLife] = useState(20);
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedPlayers = localStorage.getItem('players');
+      const storedLife = localStorage.getItem('startingLife');
+      const life = storedLife ? parseInt(storedLife, 10) : 20;
+
+      setStartingLife(life);
+
       if (storedPlayers) {
         setPlayers(JSON.parse(storedPlayers));
       } else {
-        setPlayers(defaultPlayers);
+        setPlayers(defaultPlayers(life));
       }
     }
   }, []);
 
-  const handlePlayerCountChange = (newCount: number) => {
-    if (newCount > 0 && newCount <= MAX_PLAYERS) {
-        const currentCount = players.length;
-        if (newCount > currentCount) {
-            const newPlayers = [...players];
-            for (let i = currentCount; i < newCount; i++) {
-                newPlayers.push({
-                    id: i + 1,
-                    name: `Player ${i + 1}`,
-                    life: STARTING_LIFE,
-                    color: '#444444',
-                });
-            }
-            setPlayers(newPlayers);
-        } else {
-            setPlayers(players.slice(0, newCount));
-        }
-    }
-  };
-
   const addPlayer = () => {
     if (players.length < MAX_PLAYERS) {
-      handlePlayerCountChange(players.length + 1);
+      setPlayers([...players, {
+        id: players.length > 0 ? Math.max(...players.map(p => p.id)) + 1 : 1,
+        name: `Player ${players.length + 1}`,
+        life: startingLife,
+        color: '#444444'
+      }]);
     } else {
       toast({
         title: 'Maximum players reached',
@@ -102,7 +92,9 @@ export default function SettingsPage() {
 
   const saveSettings = () => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('players', JSON.stringify(players));
+      const playersWithNewLife = players.map(p => ({ ...p, life: startingLife }));
+      localStorage.setItem('players', JSON.stringify(playersWithNewLife));
+      localStorage.setItem('startingLife', startingLife.toString());
     }
     toast({
         title: 'Settings Saved!',
@@ -118,6 +110,26 @@ export default function SettingsPage() {
         </Button>
         <h1 className="text-2xl font-bold ml-2">Settings</h1>
       </div>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Game Rules</CardTitle>
+          <CardDescription>Set the starting life total for all players.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="starting-life">Starting Life</Label>
+            <Input
+              id="starting-life"
+              type="number"
+              value={startingLife}
+              onChange={(e) => setStartingLife(parseInt(e.target.value, 10) || 0)}
+              className="max-w-xs"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
 
       <Card>
         <CardHeader>

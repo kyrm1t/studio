@@ -33,23 +33,28 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecreme
   );
 };
 
-const STARTING_LIFE = 20;
-
 const defaultPlayers: Player[] = [
-  { id: 1, name: 'Player 1', life: STARTING_LIFE, color: '#444444' },
-  { id: 2, name: 'Player 2', life: STARTING_LIFE, color: '#444444' },
+  { id: 1, name: 'Player 1', life: 20, color: '#444444' },
+  { id: 2, name: 'Player 2', life: 20, color: '#444444' },
 ];
 
 export default function Home() {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [startingLife, setStartingLife] = useState(20);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedPlayers = localStorage.getItem('players');
+      const storedLife = localStorage.getItem('startingLife');
+      const life = storedLife ? parseInt(storedLife, 10) : 20;
+
+      setStartingLife(life);
+
       if (storedPlayers) {
         setPlayers(JSON.parse(storedPlayers));
       } else {
-        setPlayers(defaultPlayers);
+        const defaultWithLife = defaultPlayers.map(p => ({ ...p, life }));
+        setPlayers(defaultWithLife);
       }
     }
   }, []);
@@ -70,7 +75,7 @@ export default function Home() {
 
   const resetLifeTotals = () => {
     setPlayers(prevPlayers => {
-      const resetPlayers = prevPlayers.map(p => ({...p, life: STARTING_LIFE}));
+      const resetPlayers = prevPlayers.map(p => ({...p, life: startingLife}));
       return resetPlayers;
     });
   };
