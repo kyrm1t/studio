@@ -73,24 +73,47 @@ export default function Home() {
     });
   };
 
-  const getGridLayout = () => {
-    switch (players.length) {
-      case 1:
-        return "grid-cols-1 grid-rows-1";
-      case 2:
-        return "grid-cols-2 grid-rows-1";
-      case 3:
-        return "grid-cols-3 grid-rows-1";
-      case 4:
-        return "grid-cols-2 grid-rows-2";
-      default:
-        return "grid-cols-1 grid-rows-1";
+  const renderPlayerPanels = () => {
+    if (players.length === 2) {
+      return (
+        <div className="flex flex-col gap-4 w-full max-w-sm">
+          {players.map((player, index) => (
+            <PlayerPanel
+              key={player.id}
+              player={player}
+              onIncrement={() => updatePlayerLife(index, 1)}
+              onDecrement={() => updatePlayerLife(index, -1)}
+            />
+          ))}
+        </div>
+      );
     }
+
+    const gridPositions = [
+        "col-span-1 row-span-1",
+        "col-start-2 col-span-1 row-span-1",
+        "col-span-1 row-start-2 row-span-1",
+        "col-start-2 col-span-1 row-start-2 row-span-1"
+    ];
+
+    return (
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl p-4">
+            {players.map((player, index) => (
+                <div key={player.id} className={gridPositions[index]}>
+                    <PlayerPanel
+                        player={player}
+                        onIncrement={() => updatePlayerLife(index, 1)}
+                        onDecrement={() => updatePlayerLife(index, -1)}
+                    />
+                </div>
+            ))}
+        </div>
+    );
   };
 
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen">
+    <div className="relative flex flex-col items-center justify-center min-h-screen">
        <div className="absolute top-4 right-4">
         <Link href="/settings">
           <Button variant="ghost" size="icon">
@@ -98,51 +121,16 @@ export default function Home() {
           </Button>
         </Link>
       </div>
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-2xl p-4">
-          {players.length > 0 && (
-            <div className="col-span-1 row-span-1">
-              <PlayerPanel
-                player={players[0]}
-                onIncrement={() => updatePlayerLife(0, 1)}
-                onDecrement={() => updatePlayerLife(0, -1)}
-              />
-            </div>
-          )}
-          {players.length > 1 && (
-            <div className="col-start-2 col-span-1 row-span-1">
-               <PlayerPanel
-                player={players[1]}
-                onIncrement={() => updatePlayerLife(1, 1)}
-                onDecrement={() => updatePlayerLife(1, -1)}
-              />
-            </div>
-          )}
-          {players.length > 2 && (
-            <div className="col-span-1 row-start-2 row-span-1">
-               <PlayerPanel
-                player={players[2]}
-                onIncrement={() => updatePlayerLife(2, 1)}
-                onDecrement={() => updatePlayerLife(2, -1)}
-              />
-            </div>
-          )}
-          {players.length > 3 && (
-            <div className="col-start-2 col-span-1 row-start-2 row-span-1">
-               <PlayerPanel
-                player={players[3]}
-                onIncrement={() => updatePlayerLife(3, 1)}
-                onDecrement={() => updatePlayerLife(3, -1)}
-              />
-            </div>
-          )}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-              <Button onClick={resetLifeTotals} className="w-24 h-24 rounded-full p-0">
-                  <RotateCcw className="w-10 h-10"/>
-                  <span className="sr-only">Reset All Players</span>
-              </Button>
-          </div>
-        </div>
+      
+      <div className="flex-grow flex items-center justify-center w-full">
+        {renderPlayerPanels()}
+      </div>
+
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+          <Button onClick={resetLifeTotals} className="w-24 h-24 rounded-full p-0">
+              <RotateCcw className="w-10 h-10"/>
+              <span className="sr-only">Reset All Players</span>
+          </Button>
       </div>
     </div>
   );
