@@ -33,9 +33,11 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({player, onIncrement, onDecreme
 
   return (
     <Card className={cn("p-4 flex flex-col items-center justify-center h-full w-full bg-black border-2", rotated && "transform rotate-180")} style={{ borderColor: player.color }}>
-      <div className="border-2 rounded-md p-2" style={boxGlowStyle}>
+      <div className="border-2 rounded-md p-2 mb-2" style={boxGlowStyle}>
         <h2 className="text-lg font-semibold bg-black px-2 py-1 text-center" style={textGlowStyle}>{player.name}</h2>
-        <p className="text-4xl font-bold my-2 bg-black px-3 py-1 rounded-md text-center" style={textGlowStyle}>{player.life}</p>
+      </div>
+      <div className="border-2 rounded-md p-2" style={boxGlowStyle}>
+        <p className="text-6xl font-bold bg-black px-3 py-1 rounded-md text-center" style={textGlowStyle}>{player.life}</p>
       </div>
       <div className="flex gap-4 mt-4">
         <Button onClick={onDecrement} variant="outline" size="icon" className="w-12 h-12 bg-black border" style={buttonGlowStyle}>
