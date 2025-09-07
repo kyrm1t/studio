@@ -112,11 +112,7 @@ export default function SettingsPage() {
       </div>
 
       <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Game Rules</CardTitle>
-          <CardDescription>Set the starting life total for all players.</CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="space-y-2">
             <Label htmlFor="starting-life">Starting Life</Label>
             <Input
